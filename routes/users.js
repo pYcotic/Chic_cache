@@ -2,9 +2,13 @@ var express = require('express');
 var router = express.Router();
 
 /* GET users listing. */
-router.post('/api/auth/login', function(req, res, next) {
-  res.send('respond with a resource');
+router.post('/login', (req, res, next) => {
+  res.json({mssg: "POST request to login"});
 });
+
+router.post('/register', (req, res,next) => {
+  res.json({mssg: "POST request to register"})
+})
 
 module.exports = router;
 

@@ -1,18 +1,52 @@
 const express = require('express');
+const mongoose = require('mongoose');
+
+require('dotenv').config();
+
+const userRoutes = require('./routes/users')
+const productRoutes = require('./routes/products')
+const adminRoutes = require('./routes/index')
+
+// Environmental variables from .env file
+// fetch port or if no port is declared use port 3000
+const PORT = process.env.PORT || 3000;
+//fetch url
+const URL = process.env.DATABASE_URL
 
 // express app
 const app = express();
 
 
 
+// middleware
+// log all requests paths and methods to console
+app.use((req, res, next) => {
+    console.log(req.path, req.method);
+    next();
+})
+// load static files
+app.use('/static', express.static('public'))
 
-// fetch port from .env file or if no port is declared use port 3000
-const PORT = process.env.PORT || 3000;
+// routes
+app.use('/api/auth', userRoutes);
+app.use('/api/products', productRoutes)
+app.use(adminRoutes)
+
+// connect to db
+mongoose.connect(URL)
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`db connected & Server listening on port ${PORT}`);
+        });
+})
+    .catch(err => console.log(err));
+
+
+
+
 
 // express is listening on the port selected and will log which port it is listening to
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
-});
+
 
 // const mongoose = require('mongoose');
 // require('dotenv').config();
