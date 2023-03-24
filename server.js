@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors')
 const bodyParser = require("body-parser");
 
 require('dotenv').config();
@@ -18,9 +19,9 @@ const URL = process.env.DATABASE_URL
 // express app
 const app = express();
 
-
-
 // middleware
+// cors
+app.use(cors())
 // log all requests paths and methods to console
 app.use((req, res, next) => {
     console.log(req.path, req.method);
@@ -37,37 +38,18 @@ app.use('/api/products', productRoutes)
 app.use(adminRoutes)
 
 // connect to db
-mongoose.connect(URL)
+mongoose.connect(URL, {
+    useNewUrlParser: true,      // uses the new URL parser when connecting to MongoDB
+    useUnifiedTopology: true})  // handles the underlying mechanics of how MongoDB clients connect to servers
     .then(() => {
         // once connected to the db
         // express is listening on the port selected and will log which port it is listening to
-        //
         app.listen(PORT, () => {
             console.log(`db connected & Server listening on port ${PORT}`);
         });
 })
-    .catch(err => console.log(err));
+    .catch(err => console.log('DB connection error', err));
 
-
-
-
-
-
-
-
-// const mongoose = require('mongoose');
-// require('dotenv').config();
-//
-// const DATABASE_URL = process.env.DATABASE_URL;
-//
-//
-// mongoose.connect(DATABASE_URL, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true})
-//     .then(() => console.log('Database connected successfully'))
-//     .catch((err) => console.log('Database connection error: ', err));
-//
-//
 // const db = mongoose.connection;
 //
 // db.on('error', console.error.bind(console, 'connection error:'));
